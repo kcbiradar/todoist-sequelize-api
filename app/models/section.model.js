@@ -1,0 +1,26 @@
+const { DataTypes } = require("sequelize");
+
+const sequelize = require("../config/config.db");
+
+const Project = require("../models/project.model");
+
+const Section = sequelize.define("Section", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  order: {
+    type: DataTypes.INTEGER,
+  },
+  name: {
+    type: DataTypes.STRING,
+  },
+  project_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: Project, key: "id" },
+  },
+});
+
+module.exports = Section;
