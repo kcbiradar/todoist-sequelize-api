@@ -16,12 +16,14 @@ const projectRouter = require("./app/routes/project.route");
 const sectionRouter = require("./app/routes/section.route");
 const taskRouter = require("./app/routes/task.route");
 const commentRouter = require("./app/routes/comment.route");
+const labelRouter = require("./app/routes/label.route");
 
 app.use("/api/user", userRouter);
 app.use("/api/project", projectRouter);
 app.use("/api/section", sectionRouter);
 app.use("/api/task", taskRouter);
 app.use("/api/comment", commentRouter);
+app.use("/api/label", labelRouter);
 
 const PORT = 3000;
 

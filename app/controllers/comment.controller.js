@@ -3,9 +3,13 @@ const Comment = require("../models/comment.model");
 const create = async (request, response) => {
   try {
     const comment = await Comment.create(request.body);
-    response.status(201).json(comment);
+    response.status(201).json({
+      status: "success",
+      data: comment,
+    });
   } catch (error) {
     response.status(400).json({
+      status: "failed",
       message: error.message || "Error occured while creating comment",
     });
   }
@@ -18,52 +22,58 @@ const getCommentOnProject = async (request, response) => {
       const comment = await Comment.findAll({
         where: { project_id: project_id },
       });
-      response.status(200).json(comment);
+      response.status(200).json({
+        status: "success",
+        data: comment,
+      });
     }
   } catch (error) {
     response.status(500).json({
-      message:
-        error.message ||
-        `Error occured while fetching comments`,
+      status: "failed",
+      message: error.message || `Error occured while fetching comments`,
     });
   }
 };
 
 const getCommentOnTask = async (request, response) => {
-    const task_id = request.params.id;
-    try {
-      if (task_id) {
-        const comment = await Comment.findAll({
-          where: { task_id: task_id },
-        });
-        response.status(200).json(comment);
-      }
-    } catch (error) {
-      response.status(500).json({
-        message:
-          error.message ||
-          `Error occured while fetching comments`,
+  const task_id = request.params.id;
+  try {
+    if (task_id) {
+      const comment = await Comment.findAll({
+        where: { task_id: task_id },
+      });
+      response.status(200).json({
+        status: "success",
+        data: comment,
       });
     }
-  };
+  } catch (error) {
+    response.status(500).json({
+      status: "failed",
+      message: error.message || `Error occured while fetching comments`,
+    });
+  }
+};
 
-  const getOne = async (request, response) => {
-    const id = request.params.id;
-    try {
-      if (id) {
-        const comment = await Comment.findOne({
-          where: { id: id },
-        });
-        response.status(200).json(comment);
-      }
-    } catch (error) {
-      response.status(500).json({
-        message:
-          error.message ||
-          `Error occured while fetching comment`,
+const getOne = async (request, response) => {
+  const id = request.params.id;
+  try {
+    if (id) {
+      const comment = await Comment.findOne({
+        where: { id: id },
+      });
+      response.status(200).json({
+        status: "success",
+        data: comment,
       });
     }
-  };
+  } catch (error) {
+    response.status(500).json({
+      status: "failed",
+      message: error.message || `Error occured while fetching comment`,
+    });
+  }
+};
 
 const update = async (request, response) => {
   const id = request.params.id;
@@ -72,12 +82,14 @@ const update = async (request, response) => {
       await Comment.update(request.body, {
         where: { id: id },
       });
-      response
-        .status(200)
-        .json({ message: `Comment details are updated successfully!` });
+      response.status(200).json({
+        status: "success",
+        message: `Comment details are updated successfully!`,
+      });
     }
   } catch (error) {
     response.status(500).send({
+      status: "failed",
       message: error.message || "Error occured while updating project details!",
     });
   }
@@ -87,9 +99,12 @@ const remove = async (request, response) => {
   const id = request.params.id;
   try {
     await Comment.destroy({ where: { id: id } });
-    response.status(204).json({ message: "comment removed successfully!" });
+    response
+      .status(204)
+      .json({ status: "success", message: "comment removed successfully!" });
   } catch (error) {
     response.status(500).send({
+      status: "failed",
       message: error.message || `Error occured while removeing project`,
     });
   }

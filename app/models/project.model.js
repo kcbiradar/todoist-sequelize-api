@@ -32,7 +32,6 @@ const Project = sequelize.define("Projects", {
   },
   order: {
     type: DataTypes.INTEGER,
-    unique: true,
   },
   view_style: {
     type: DataTypes.STRING,

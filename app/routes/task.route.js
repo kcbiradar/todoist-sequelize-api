@@ -2,19 +2,18 @@ const express = require("express");
 
 const router = express.Router();
 
-const controller = require('../controllers/task.controller');
+const controller = require("../controllers/task.controller");
 
-router.route("/")
-.post(controller.create)
+router.route("/").post(controller.create);
 
-router.get('/project/:id' , controller.filterByProjectId)
+router.put("/toggle/:id", controller.toggle);
 
-router.get('/section/:id' , controller.filterBySectionId)
+router.get("/project/:id", controller.filterByProjectId);
 
-router.get('/label' , controller.filterByLabels)
+router.get("/section/:id", controller.filterBySectionId);
 
-router.route("/:id")
-.delete(controller.remove)
-.put(controller.update)
+router.get("/label", controller.filterByLabels);
+
+router.route("/:id").delete(controller.remove).put(controller.update);
 
 module.exports = router;

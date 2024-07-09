@@ -37,6 +37,7 @@ const Task = sequelize.define("Task", {
   },
   is_completed: {
     type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
   order: {
     type: DataTypes.INTEGER,
@@ -49,7 +50,7 @@ const Task = sequelize.define("Task", {
   },
   comment_count: {
     type: DataTypes.INTEGER,
-    defaultValue : 0,
+    defaultValue: 0,
   },
   duration: {
     type: DataTypes.DATE,
