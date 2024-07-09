@@ -15,46 +15,6 @@ const create = async (request, response) => {
   }
 };
 
-const getCommentOnProject = async (request, response) => {
-  const project_id = request.params.id;
-  try {
-    if (project_id) {
-      const comment = await Comment.findAll({
-        where: { project_id: project_id },
-      });
-      response.status(200).json({
-        status: "success",
-        data: comment,
-      });
-    }
-  } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      message: error.message || `Error occured while fetching comments`,
-    });
-  }
-};
-
-const getCommentOnTask = async (request, response) => {
-  const task_id = request.params.id;
-  try {
-    if (task_id) {
-      const comment = await Comment.findAll({
-        where: { task_id: task_id },
-      });
-      response.status(200).json({
-        status: "success",
-        data: comment,
-      });
-    }
-  } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      message: error.message || `Error occured while fetching comments`,
-    });
-  }
-};
-
 const getOne = async (request, response) => {
   const id = request.params.id;
   try {
@@ -112,8 +72,6 @@ const remove = async (request, response) => {
 
 module.exports = {
   create,
-  getCommentOnProject,
-  getCommentOnTask,
   getOne,
   update,
   remove,

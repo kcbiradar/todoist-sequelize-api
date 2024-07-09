@@ -1,13 +1,15 @@
 const { Op } = require("sequelize");
 const Task = require("../models/task.model");
 
+const Comment = require("../models/comment.model");
+
 const create = async (request, response) => {
   try {
     const url =
       request.protocol + "://" + request.get("host") + request.originalUrl;
     request.body.url = url;
     const task = await Task.create(request.body);
-    task.url += `${task.id}`;
+    task.url += `?id=${task.id}`;
     response.status(201).json({
       status: "success",
       data: task,
@@ -20,15 +22,12 @@ const create = async (request, response) => {
   }
 };
 
-const filterByProjectId = async (request, response) => {
+const getAll = async (request, response) => {
   try {
-    const project_id = request.params.id;
-    const tasks = await Task.findAll({
-      where: { project_id: project_id },
-    });
+    const tasks = await Task.findAll();
     response.status(200).json({
       status: "success",
-      data: tasks,
+      data: tasks || "No tasks available",
     });
   } catch (error) {
     response.status(500).json({
@@ -38,15 +37,22 @@ const filterByProjectId = async (request, response) => {
   }
 };
 
-const filterBySectionId = async (request, response) => {
+const filterByIds = async (request, response) => {
   try {
-    const section_id = request.params.id;
-    const tasks = await Task.findAll({
-      where: { section_id: section_id },
-    });
+    const { project_id, section_id } = request.query;
+    let tasks;
+    if (project_id && section_id) {
+      tasks = await Task.findAll({
+        where: { project_id: project_id, section_id: section_id },
+      });
+    } else if (project_id) {
+      tasks = await Task.findAll({ where: { project_id: project_id } });
+    } else if (section_id) {
+      tasks = await Task.findAll({ where: { section_id: section_id } });
+    }
     response.status(200).json({
       status: "success",
-      data: tasks,
+      data: tasks || "No tasks available",
     });
   } catch (error) {
     response.status(500).json({
@@ -56,9 +62,9 @@ const filterBySectionId = async (request, response) => {
   }
 };
 
-const filterByLabels = async (req, res) => {
+const filterByLabels = async (request, response) => {
   try {
-    const { labels } = req.query;
+    const { labels } = request.query;
     const labelsArray = labels.split(",");
     const tasks = await Task.findAll({
       where: {
@@ -68,12 +74,12 @@ const filterByLabels = async (req, res) => {
       },
     });
 
-    res.json({
+    response.json({
       status: "success",
       data: tasks,
     });
   } catch (error) {
-    res
+    response
       .status(500)
       .json({ status: "failed", message: "Internal server error" });
   }
@@ -134,12 +140,33 @@ const toggle = async (request, response) => {
   }
 };
 
+const getComments = async (request, response) => {
+  const task_id = request.params.id;
+  try {
+    if (task_id) {
+      const comment = await Comment.findAll({
+        where: { task_id: task_id },
+      });
+      response.status(200).json({
+        status: "success",
+        data: comment,
+      });
+    }
+  } catch (error) {
+    response.status(500).json({
+      status: "failed",
+      message: error.message || `Error occured while fetching comments`,
+    });
+  }
+};
+
 module.exports = {
   create,
-  filterByProjectId,
-  filterBySectionId,
+  filterByIds,
+  getAll,
   filterByLabels,
   toggle,
   update,
   remove,
+  getComments,
 };

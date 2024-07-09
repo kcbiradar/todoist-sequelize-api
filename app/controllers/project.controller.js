@@ -1,12 +1,14 @@
 const Project = require("../models/project.model");
 
+const Comment = require("../models/comment.model");
+
 const create = async (request, response) => {
   try {
     const url =
       request.protocol + "://" + request.get("host") + request.originalUrl;
     request.body.url = url;
     const project = await Project.create(request.body);
-    project.url += `${project.id}`;
+    project.url += `?id=${project.id}`;
     response.status(201).json({
       status: "success",
       data: project,
@@ -91,10 +93,32 @@ const remove = async (request, response) => {
   }
 };
 
+
+const getComments = async (request, response) => {
+  const project_id = request.params.id;
+  try {
+    if (project_id) {
+      const comment = await Comment.findAll({
+        where: { project_id: project_id },
+      });
+      response.status(200).json({
+        status: "success",
+        data: comment,
+      });
+    }
+  } catch (error) {
+    response.status(500).json({
+      status: "failed",
+      message: error.message || `Error occured while fetching comments`,
+    });
+  }
+};
+
 module.exports = {
   create,
   getAll,
   getOne,
   update,
   remove,
+  getComments
 };

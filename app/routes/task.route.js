@@ -6,11 +6,13 @@ const controller = require("../controllers/task.controller");
 
 router.route("/").post(controller.create);
 
+router.get("/all", controller.getAll);
+
+router.get("/", controller.filterByIds);
+
 router.put("/toggle/:id", controller.toggle);
 
-router.get("/project/:id", controller.filterByProjectId);
-
-router.get("/section/:id", controller.filterBySectionId);
+router.get("/comment/:id", controller.getComments);
 
 router.get("/label", controller.filterByLabels);
 

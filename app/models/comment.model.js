@@ -42,8 +42,6 @@ Comment.afterCreate(async (comment, options) => {
         where: { id: comment.task_id },
       });
     }
-
-    console.log("comment_count updated successfully.");
   } catch (error) {
     console.error("Error occurred while updating comment_count:", error);
   }
