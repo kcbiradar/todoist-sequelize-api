@@ -1,13 +1,12 @@
 const Section = require("../models/section.model");
 
+const { v4: uuidv4 } = require('uuid');
+
 const create = async (request, response) => {
   const { order, name, project_id } = request.body;
   try {
-    const section = await Section.create({
-      project_id: project_id,
-      order: order,
-      name: name,
-    });
+    request.body.id = uuidv4();
+    const section = await Section.create(request.body);
     response.status(201).json({
       status: "success",
       data: section,

@@ -2,15 +2,25 @@ const Project = require("../models/project.model");
 
 const Comment = require("../models/comment.model");
 
+const { v4: uuidv4 } = require("uuid");
+
 const create = async (request, response) => {
   try {
-    const url =
-      request.protocol + "://" + request.get("host") + request.originalUrl;
-    request.body.url = url;
+    request.body.id = uuidv4();
     const project = await Project.create(request.body);
-    project.url += `?id=${project.id}`;
+    const project_url = `http://localhost:3000/api/project/showProject?id=${project.id}`;
+    project.url = project_url;
+
+    await Project.update(
+      {
+        url: project_url,
+      },
+      { where: { id: project.id } }
+    );
+
     response.status(201).json({
       status: "success",
+      message: "Project created successfully!",
       data: project,
     });
   } catch (error) {
@@ -93,7 +103,6 @@ const remove = async (request, response) => {
   }
 };
 
-
 const getComments = async (request, response) => {
   const project_id = request.params.id;
   try {
@@ -120,5 +129,5 @@ module.exports = {
   getOne,
   update,
   remove,
-  getComments
+  getComments,
 };

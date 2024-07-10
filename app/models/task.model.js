@@ -8,16 +8,15 @@ const Section = require("../models/section.model");
 
 const Task = sequelize.define("Task", {
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.STRING,
     primaryKey: true,
   },
   project_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: Project, key: "id" },
   },
   section_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: Section, key: "id" },
   },
   content: {
@@ -25,7 +24,7 @@ const Task = sequelize.define("Task", {
     allowNull: false,
   },
   parent_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: "Tasks", key: "id" },
   },
   description: {
@@ -59,15 +58,15 @@ const Task = sequelize.define("Task", {
     type: DataTypes.JSONB,
   },
   creator_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: User, key: "id" },
   },
   assignee_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: User, key: "id" },
   },
   assigner_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: User, key: "id" },
   },
 });

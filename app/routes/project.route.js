@@ -15,6 +15,6 @@ router.route("/:id")
 .put(controller.update)
 .delete(controller.remove)
 
-router.get('/comment/:id' , controller.getComments)
+router.get('/:id/comment' , controller.getComments)
 
 module.exports = router;

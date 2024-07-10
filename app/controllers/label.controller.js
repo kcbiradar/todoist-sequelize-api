@@ -1,7 +1,10 @@
 const Label = require("../models/label.model");
 
+const { v4: uuidv4 } = require('uuid');
+
 const create = async (request, response) => {
   try {
+    request.body.id = uuidv4();
     const label = await Label.create(request.body);
     response.status(201).json({
       status: "success",
@@ -73,8 +76,6 @@ const remove = async (request, response) => {
 module.exports = {
   create,
   getAll,
-  //   getCommentOnTask,
-  //   getOne,
   update,
   remove,
 };

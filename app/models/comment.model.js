@@ -5,8 +5,7 @@ const Task = require("../models/task.model");
 
 const Comment = sequelize.define("Comment", {
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.STRING,
     primaryKey: true,
     allowNull: false,
   },
@@ -15,11 +14,11 @@ const Comment = sequelize.define("Comment", {
     allowNull: false,
   },
   project_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: Project, key: "id" },
   },
   task_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: Task, key: "id" },
   },
   attachment: {

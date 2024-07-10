@@ -6,9 +6,8 @@ const User = require("../models/user.model");
 
 const Project = sequelize.define("Projects", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
   },
   name: {
     type: DataTypes.STRING,
@@ -19,6 +18,7 @@ const Project = sequelize.define("Projects", {
   },
   is_shared: {
     type: DataTypes.BOOLEAN,
+    defaultValue : false
   },
   comment_count: {
     type: DataTypes.INTEGER,
@@ -26,12 +26,14 @@ const Project = sequelize.define("Projects", {
   },
   is_favorite: {
     type: DataTypes.BOOLEAN,
+    defaultValue : false
   },
   url: {
     type: DataTypes.STRING,
   },
   order: {
     type: DataTypes.INTEGER,
+    unique : true
   },
   view_style: {
     type: DataTypes.STRING,
@@ -43,12 +45,12 @@ const Project = sequelize.define("Projects", {
     type: DataTypes.BOOLEAN,
   },
   parent_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull : true,
     references: { model: "Projects", key: "id" },
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: User, key: "id" },
   },

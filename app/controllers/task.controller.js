@@ -1,15 +1,14 @@
 const { Op } = require("sequelize");
 const Task = require("../models/task.model");
 
+const { v4: uuidv4 } = require('uuid');
+
 const Comment = require("../models/comment.model");
 
 const create = async (request, response) => {
   try {
-    const url =
-      request.protocol + "://" + request.get("host") + request.originalUrl;
-    request.body.url = url;
+    request.body.id = uuidv4();
     const task = await Task.create(request.body);
-    task.url += `?id=${task.id}`;
     response.status(201).json({
       status: "success",
       data: task,

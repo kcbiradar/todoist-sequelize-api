@@ -6,8 +6,7 @@ const User = require("../models/user.model");
 
 const Label = sequelize.define("Label", {
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.STRING,
     primaryKey: true,
   },
   order: {
@@ -24,7 +23,7 @@ const Label = sequelize.define("Label", {
     type: DataTypes.BOOLEAN,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: { model: User, key: "id" },
   },
 });

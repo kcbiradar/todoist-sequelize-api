@@ -1,7 +1,10 @@
 const Comment = require("../models/comment.model");
 
+const { v4: uuidv4 } = require("uuid");
+
 const create = async (request, response) => {
   try {
+    request.body.id = uuidv4();
     const comment = await Comment.create(request.body);
     response.status(201).json({
       status: "success",

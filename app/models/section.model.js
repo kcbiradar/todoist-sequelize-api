@@ -6,9 +6,8 @@ const Project = require("../models/project.model");
 
 const Section = sequelize.define("Section", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true,
   },
   order: {
     type: DataTypes.INTEGER,
@@ -17,7 +16,7 @@ const Section = sequelize.define("Section", {
     type: DataTypes.STRING,
   },
   project_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     references: { model: Project, key: "id" },
   },
