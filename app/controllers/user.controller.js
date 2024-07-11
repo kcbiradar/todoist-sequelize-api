@@ -1,10 +1,14 @@
 const User = require("../models/user.model");
 
+const verifyToken = require('../middleware/middleware.authentication');
+
 const bcrypt = require("bcrypt");
 
 const { v4: uuidv4 } = require("uuid");
 
 const validator = require("validator");
+
+const jwt = require("jsonwebtoken");
 
 const signup = async (request, response) => {
   try {
@@ -27,7 +31,7 @@ const signup = async (request, response) => {
     if (duplicateUser) {
       return response.status(209).json({
         status: "failed",
-        message: "alredy registered",
+        message: "already registered",
       });
     }
 
@@ -53,12 +57,22 @@ const signup = async (request, response) => {
 const login = async (request, response) => {
   try {
     const { password, email } = request.body;
+    
     const user = await User.findOne({ where: { email: email } });
     if (user) {
       const match = await bcrypt.compare(password, user.password);
       if (match) {
+        
+        
+        const token = jwt.sign(
+          { id: user.id, username: user.name },
+          "secretkey",
+          { expiresIn: "1h" }
+        );
         response.status(200).json({
           status: "success",
+          token : token,
+          user_id : user.id,
           message: "logged in successfully",
         });
       }
