@@ -7,8 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 const create = async (request, response) => {
   try {
     request.body.id = uuidv4();
+    request.body.user_id = request.params.user_id;
     const project = await Project.create(request.body);
-
     const project_url = `http://localhost:3000/api/v1/project/showProject?id=${project.id}`;
 
     project.url = project_url;
@@ -45,7 +45,9 @@ const create = async (request, response) => {
 const getAll = async (request, response) => {
   console.log(request.params.user_id);
   try {
-    const project = await Project.findAll({where : {user_id : request.params.user_id}});
+    const project = await Project.findAll({
+      where: { user_id: request.params.user_id },
+    });
     response.status(200).json({
       status: "success",
       status_code: 200,

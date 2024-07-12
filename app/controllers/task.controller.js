@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const Task = require("../models/task.model");
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const Comment = require("../models/comment.model");
 
@@ -11,12 +11,22 @@ const create = async (request, response) => {
     const task = await Task.create(request.body);
     response.status(201).json({
       status: "success",
-      data: task,
+      status_code: 201,
+      message: "Task created successfully!",
+      data: {
+        task: task,
+      },
+      error: null,
     });
   } catch (error) {
     response.status(400).json({
       status: "failed",
-      message: error.message || "Error occured while creating project",
+      status_code: 400,
+      error: {
+        error_message: error.message,
+      },
+      message: "Error occured while creating project",
+      data: null,
     });
   }
 };
@@ -26,12 +36,22 @@ const getAll = async (request, response) => {
     const tasks = await Task.findAll();
     response.status(200).json({
       status: "success",
-      data: tasks || "No tasks available",
+      status_code: 200,
+      data: {
+        tasks: tasks || "No tasks available",
+      },
+      message: "Tasks retrived successfully",
+      error: null,
     });
   } catch (error) {
     response.status(500).json({
       status: "failed",
-      message: error.message || "Error occured while retriving tasks",
+      status_code: 500,
+      data: null,
+      error: {
+        error_message: error.message,
+      },
+      message: "Error occured while retriving tasks",
     });
   }
 };
@@ -51,12 +71,22 @@ const filterByIds = async (request, response) => {
     }
     response.status(200).json({
       status: "success",
-      data: tasks || "No tasks available",
+      status_code: 200,
+      data: {
+        tasks: tasks || "No tasks available",
+      },
+      error: null,
+      message: "Matching tasks retrived successfully!",
     });
   } catch (error) {
     response.status(500).json({
       status: "failed",
-      message: error.message || "Error occured while retriving tasks",
+      status_code: 500,
+      error: {
+        error_message: error.message,
+      },
+      data: null,
+      message: "Error occured while retriving tasks",
     });
   }
 };
@@ -73,14 +103,25 @@ const filterByLabels = async (request, response) => {
       },
     });
 
-    response.json({
+    response.status(200).json({
       status: "success",
-      data: tasks,
+      status_code: 200,
+      message: "Matching tasks fetched successfully!",
+      data: {
+        tasks: tasks,
+      },
+      error: null,
     });
   } catch (error) {
-    response
-      .status(500)
-      .json({ status: "failed", message: "Internal server error" });
+    response.status(500).json({
+      status: "failed",
+      status_code: 500,
+      error: {
+        error: error.message,
+      },
+      message: "Internal server error",
+      data: null,
+    });
   }
 };
 
@@ -91,15 +132,26 @@ const update = async (request, response) => {
       await Task.update(request.body, {
         where: { id: task_id },
       });
+      const task = await Task.findOne({ where: { id: task_id } });
       response.status(200).json({
         status: "success",
+        status_code: 200,
+        data: {
+          task: task,
+        },
         message: `Task details are updated successfully!`,
+        error: null,
       });
     }
   } catch (error) {
     response.status(500).send({
       status: "failed",
-      message: error.message || "Error occured while updating task details!",
+      status_code: 500,
+      error: {
+        error_message: error.message,
+      },
+      message: "Error occured while updating task details!",
+      data: null,
     });
   }
 };
@@ -108,13 +160,22 @@ const remove = async (request, response) => {
   const id = request.params.id;
   try {
     await Task.destroy({ where: { id: id } });
-    response
-      .status(204)
-      .json({ status: "success", message: "Task removed successfully!" });
+    response.status(204).json({
+      status: "success",
+      status_code: 204,
+      data: null,
+      error: null,
+      message: "Task removed successfully!",
+    });
   } catch (error) {
     response.status(500).send({
       status: "faied",
-      message: error.message || `Error occured while removeing task`,
+      status_code: 500,
+      error: {
+        error_message: error.message,
+      },
+      message: `Error occured while removeing task`,
+      data: null,
     });
   }
 };
@@ -126,15 +187,26 @@ const toggle = async (request, response) => {
       await Task.update(request.body, {
         where: { id: task_id, is_completed: !is_completed },
       });
+      const task = await Task.findOne({ where: { id: task_id } });
       response.status(200).json({
         status: "success",
+        status_code: 200,
+        data: {
+          task: task,
+        },
         message: `Task details are updated successfully!`,
+        error: null,
       });
     }
   } catch (error) {
     response.status(500).send({
       status: "failed",
-      message: error.message || "Error occured while updating task details!",
+      status_code: 500,
+      error: {
+        error_message: error.message,
+      },
+      message: "Error occured while updating task details!",
+      data: null,
     });
   }
 };
@@ -148,13 +220,23 @@ const getComments = async (request, response) => {
       });
       response.status(200).json({
         status: "success",
-        data: comment,
+        status_code: 200,
+        error: null,
+        data: {
+          comment: comment,
+        },
+        message: "All comments are fetched successfully!",
       });
     }
   } catch (error) {
     response.status(500).json({
       status: "failed",
-      message: error.message || `Error occured while fetching comments`,
+      status_code: 500,
+      error: {
+        error_message: error.message,
+      },
+      message: `Error occured while fetching comments`,
+      data: null,
     });
   }
 };

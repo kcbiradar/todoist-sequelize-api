@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 
-const verifyToken = require('../middleware/middleware.authentication');
+const verifyToken = require("../middleware/middleware.authentication");
 
 const bcrypt = require("bcrypt");
 
@@ -57,13 +57,11 @@ const signup = async (request, response) => {
 const login = async (request, response) => {
   try {
     const { password, email } = request.body;
-    
+
     const user = await User.findOne({ where: { email: email } });
     if (user) {
       const match = await bcrypt.compare(password, user.password);
       if (match) {
-        
-        
         const token = jwt.sign(
           { id: user.id, username: user.name },
           "secretkey",
@@ -71,20 +69,23 @@ const login = async (request, response) => {
         );
         response.status(200).json({
           status: "success",
-          token : token,
-          user_id : user.id,
+          token: token,
+          user_id: user.id,
+          name: user.name,
           message: "logged in successfully",
         });
       }
     } else {
       response.status(401).json({
         status: "failed",
+        status_code: 401,
         message: "Provide valid credentials",
       });
     }
   } catch (error) {
     response.status(401).json({
       status: "failed",
+      status_code: 401,
       message: "Auth failed",
     });
   }
@@ -94,13 +95,19 @@ const remove = async (request, response) => {
   const id = request.params.id;
   try {
     await User.destroy({ where: { id: id } });
-    response
-      .status(204)
-      .json({ status: "success", message: "Account deleted successfully!" });
+    response.status(204).json({
+      status: "success",
+      status_code: 204,
+      message: "Account deleted successfully!",
+    });
   } catch (error) {
     response.status(500).send({
       status: "failed",
-      message: error.message || `Error occured while deleting account`,
+      status_code: 500,
+      error: {
+        error_message: error.message,
+      },
+      message: `Error occured while deleting account`,
     });
   }
 };

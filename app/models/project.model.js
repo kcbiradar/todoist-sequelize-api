@@ -18,22 +18,22 @@ const Project = sequelize.define("Projects", {
   },
   is_shared: {
     type: DataTypes.BOOLEAN,
-    defaultValue : false
+    defaultValue: false,
   },
   comment_count: {
     type: DataTypes.INTEGER,
-    defaultValue : 0,
+    defaultValue: 0,
   },
   is_favorite: {
     type: DataTypes.BOOLEAN,
-    defaultValue : false
+    defaultValue: false,
   },
   url: {
     type: DataTypes.STRING,
   },
   order: {
     type: DataTypes.INTEGER,
-    unique : true
+    unique: true,
   },
   view_style: {
     type: DataTypes.STRING,
@@ -46,13 +46,15 @@ const Project = sequelize.define("Projects", {
   },
   parent_id: {
     type: DataTypes.STRING,
-    allowNull : true,
+    allowNull: true,
     references: { model: "Projects", key: "id" },
+    onDelete: "CASCADE",
   },
   user_id: {
     type: DataTypes.STRING,
     allowNull: false,
     references: { model: User, key: "id" },
+    onDelete: "CASCADE",
   },
 });
 

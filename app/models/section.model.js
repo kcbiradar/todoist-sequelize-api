@@ -19,6 +19,7 @@ const Section = sequelize.define("Section", {
     type: DataTypes.STRING,
     allowNull: false,
     references: { model: Project, key: "id" },
+    onDelete: "CASCADE",
   },
 });
 

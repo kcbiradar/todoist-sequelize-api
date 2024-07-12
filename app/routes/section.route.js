@@ -6,9 +6,12 @@ const controller = require("../controllers/section.controller");
 
 router.route("/").post(controller.create);
 
-router.route("/:id")
-.get(controller.getOne)
-.put(controller.update)
-.delete(controller.remove)
+router.get("/all/:project_id", controller.getAll);
+
+router
+  .route("/:id")
+  .get(controller.getOne)
+  .put(controller.update)
+  .delete(controller.remove);
 
 module.exports = router;

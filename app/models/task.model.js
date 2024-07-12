@@ -14,10 +14,12 @@ const Task = sequelize.define("Task", {
   project_id: {
     type: DataTypes.STRING,
     references: { model: Project, key: "id" },
+    onDelete: "CASCADE",
   },
   section_id: {
     type: DataTypes.STRING,
     references: { model: Section, key: "id" },
+    onDelete: "CASCADE",
   },
   content: {
     type: DataTypes.STRING,
@@ -60,6 +62,7 @@ const Task = sequelize.define("Task", {
   creator_id: {
     type: DataTypes.STRING,
     references: { model: User, key: "id" },
+    onDelete: "CASCADE",
   },
   assignee_id: {
     type: DataTypes.STRING,

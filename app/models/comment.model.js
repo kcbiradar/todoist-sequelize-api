@@ -16,10 +16,12 @@ const Comment = sequelize.define("Comment", {
   project_id: {
     type: DataTypes.STRING,
     references: { model: Project, key: "id" },
+    onDelete: "CASCADE",
   },
   task_id: {
     type: DataTypes.STRING,
     references: { model: Task, key: "id" },
+    onDelete: "CASCADE",
   },
   attachment: {
     type: DataTypes.JSONB,

@@ -25,6 +25,7 @@ const Label = sequelize.define("Label", {
   user_id: {
     type: DataTypes.STRING,
     references: { model: User, key: "id" },
+    onDelete: "CASCADE",
   },
 });
 
