@@ -1,20 +1,21 @@
 const Label = require("../models/label.model");
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
+
+const sendResponse = require("../utils/response");
 
 const create = async (request, response) => {
   try {
     request.body.id = uuidv4();
     const label = await Label.create(request.body);
-    response.status(201).json({
-      status: "success",
-      data: label,
-    });
+    sendResponse(response, 201, "Label created successfully!", label);
   } catch (error) {
-    response.status(400).json({
-      status: "failed",
-      message: error.message || "Error occured while creating label",
-    });
+    sendResponse(
+      response,
+      400,
+      "Error occured while creating label",
+      error.message
+    );
   }
 };
 
@@ -25,16 +26,15 @@ const getAll = async (request, response) => {
       const label = await Label.findAll({
         where: { user_id: id },
       });
-      response.status(200).json({
-        status: "success",
-        data: label,
-      });
+      sendResponse(response, 200, "Labels retrived successfully!", label);
     }
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      message: error.message || `Error occured while fetching label`,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while retriving labels",
+      error.message
+    );
   }
 };
 
@@ -45,16 +45,16 @@ const update = async (request, response) => {
       await Label.update(request.body, {
         where: { id: id },
       });
-      response.status(200).json({
-        status: "success",
-        message: `Label details are updated successfully!`,
-      });
+      const label = Label.findOne({ where: { id: id } });
+      sendResponse(response, 200, "Label updated successfully!", label);
     }
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      message: error.message || "Error occured while updating label details!",
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while updating label details",
+      error.message
+    );
   }
 };
 
@@ -62,14 +62,14 @@ const remove = async (request, response) => {
   const id = request.params.id;
   try {
     await Label.destroy({ where: { id: id } });
-    response
-      .status(204)
-      .json({ status: "success", message: "label removed successfully!" });
+    sendResponse(response, 204, "Label removed successfully!", null);
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      message: error.message || `Error occured while removeing label`,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while removing label",
+      error.message
+    );
   }
 };
 

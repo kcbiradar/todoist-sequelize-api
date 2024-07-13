@@ -2,29 +2,20 @@ const Section = require("../models/section.model");
 
 const { v4: uuidv4 } = require("uuid");
 
+const sendResponse = require("../utils/response");
+
 const create = async (request, response) => {
   try {
     request.body.id = uuidv4();
     const section = await Section.create(request.body);
-    response.status(201).json({
-      status: "success",
-      status_code: 201,
-      error: null,
-      data: {
-        section: section,
-      },
-      message: "Section created successfully!",
-    });
+    sendResponse(response, 201, "Section created successfully!", section);
   } catch (error) {
-    response.status(400).json({
-      status: "failed",
-      status_code: 400,
-      error: {
-        error_message: error.message,
-      },
-      message: "Error occured while creating section",
-      data: null,
-    });
+    sendResponse(
+      response,
+      400,
+      "Error occured while creating section",
+      error.message
+    );
   }
 };
 
@@ -32,25 +23,14 @@ const getAll = async (request, response) => {
   const id = request.params.project_id;
   try {
     const section = await Section.findAll({ where: { project_id: id } });
-    response.status(200).json({
-      status: "success",
-      status_code: 200,
-      error: null,
-      message: "Sections are retrived successfully!",
-      data: {
-        section: section,
-      },
-    });
+    sendResponse(response, 200, "Sections are retrived successfully!", section);
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error: error.message,
-      },
-      message: "Error occured while fetching sections.",
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while fetching sections",
+      error.message
+    );
   }
 };
 
@@ -61,26 +41,15 @@ const getOne = async (request, response) => {
       const section = await Section.findOne({
         where: { id: id },
       });
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        message: "Section data is fetched successfully!",
-        data: {
-          section: section,
-        },
-        error: null,
-      });
+      sendResponse(response, 200, "Section fetched successfully!", section);
     }
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: `Error occured while fetching section with id ${id}`,
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while fetching section",
+      error.message
+    );
   }
 };
 
@@ -93,27 +62,20 @@ const update = async (request, response) => {
       });
 
       const section = Section.findOne({ where: { id: section_id } });
-
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        data: {
-          section: section,
-        },
-        message: `Section details are updated successfully!`,
-        error: null,
-      });
+      sendResponse(
+        response,
+        200,
+        "Section details are updated successfully!",
+        section
+      );
     }
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      data: null,
-      message: "Error occured while updating section details!",
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while updating section details!",
+      error.message
+    );
   }
 };
 
@@ -121,20 +83,14 @@ const remove = async (request, response) => {
   const section_id = request.params.id;
   try {
     await Section.destroy({ where: { id: section_id } });
-    response.status(204).json({
-      status: "success",
-      status_code: 204,
-      message: "Section removed successfully!",
-    });
+    sendResponse(response, 204, "Section removed successfully!", null);
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: `Error occured while removeing section`,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while removing section",
+      error.message
+    );
   }
 };
 

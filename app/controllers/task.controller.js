@@ -5,54 +5,34 @@ const { v4: uuidv4 } = require("uuid");
 
 const Comment = require("../models/comment.model");
 
+const sendResponse = require("../utils/response");
+
 const create = async (request, response) => {
   try {
     request.body.id = uuidv4();
     const task = await Task.create(request.body);
-    response.status(201).json({
-      status: "success",
-      status_code: 201,
-      message: "Task created successfully!",
-      data: {
-        task: task,
-      },
-      error: null,
-    });
+    sendResponse(response, 201, "Task created successfully!", task);
   } catch (error) {
-    response.status(400).json({
-      status: "failed",
-      status_code: 400,
-      error: {
-        error_message: error.message,
-      },
-      message: "Error occured while creating project",
-      data: null,
-    });
+    sendResponse(
+      response,
+      400,
+      "Error occured while creating task!",
+      error.message
+    );
   }
 };
 
 const getAll = async (request, response) => {
   try {
     const tasks = await Task.findAll();
-    response.status(200).json({
-      status: "success",
-      status_code: 200,
-      data: {
-        tasks: tasks || "No tasks available",
-      },
-      message: "Tasks retrived successfully",
-      error: null,
-    });
+    sendResponse(response, 200, "Tasks retrived successfully", tasks);
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      data: null,
-      error: {
-        error_message: error.message,
-      },
-      message: "Error occured while retriving tasks",
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while retriving tasks",
+      error.message
+    );
   }
 };
 
@@ -69,25 +49,15 @@ const filterByIds = async (request, response) => {
     } else if (section_id) {
       tasks = await Task.findAll({ where: { section_id: section_id } });
     }
-    response.status(200).json({
-      status: "success",
-      status_code: 200,
-      data: {
-        tasks: tasks || "No tasks available",
-      },
-      error: null,
-      message: "Matching tasks retrived successfully!",
-    });
+
+    sendResponse(response, 200, "Matching tasks retrived successfully", tasks);
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      data: null,
-      message: "Error occured while retriving tasks",
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while retriving tasks",
+      error.message
+    );
   }
 };
 
@@ -102,26 +72,14 @@ const filterByLabels = async (request, response) => {
         },
       },
     });
-
-    response.status(200).json({
-      status: "success",
-      status_code: 200,
-      message: "Matching tasks fetched successfully!",
-      data: {
-        tasks: tasks,
-      },
-      error: null,
-    });
+    sendResponse(response, 200, "Matching tasks fetched successfully!", tasks);
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error: error.message,
-      },
-      message: "Internal server error",
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while fetching tasks",
+      error.message
+    );
   }
 };
 
@@ -133,26 +91,20 @@ const update = async (request, response) => {
         where: { id: task_id },
       });
       const task = await Task.findOne({ where: { id: task_id } });
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        data: {
-          task: task,
-        },
-        message: `Task details are updated successfully!`,
-        error: null,
-      });
+      sendResponse(
+        response,
+        200,
+        "Task details are updated successfully",
+        task
+      );
     }
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: "Error occured while updating task details!",
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while updating task details",
+      error.message
+    );
   }
 };
 
@@ -160,23 +112,14 @@ const remove = async (request, response) => {
   const id = request.params.id;
   try {
     await Task.destroy({ where: { id: id } });
-    response.status(204).json({
-      status: "success",
-      status_code: 204,
-      data: null,
-      error: null,
-      message: "Task removed successfully!",
-    });
+    sendResponse(response, 204, "Task removed successfully!", null);
   } catch (error) {
-    response.status(500).send({
-      status: "faied",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: `Error occured while removeing task`,
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while removing task",
+      error.message
+    );
   }
 };
 
@@ -188,26 +131,15 @@ const toggle = async (request, response) => {
         where: { id: task_id, is_completed: !is_completed },
       });
       const task = await Task.findOne({ where: { id: task_id } });
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        data: {
-          task: task,
-        },
-        message: `Task details are updated successfully!`,
-        error: null,
-      });
+      sendResponse(response, 200, "Tasks details updated successfully!", task);
     }
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: "Error occured while updating task details!",
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while updating task details!",
+      error.message
+    );
   }
 };
 
@@ -218,26 +150,20 @@ const getComments = async (request, response) => {
       const comment = await Comment.findAll({
         where: { task_id: task_id },
       });
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        error: null,
-        data: {
-          comment: comment,
-        },
-        message: "All comments are fetched successfully!",
-      });
+      sendResponse(
+        response,
+        200,
+        "All comments are fetched successfully",
+        comment
+      );
     }
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: `Error occured while fetching comments`,
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while fetching comments",
+      error.message
+    );
   }
 };
 

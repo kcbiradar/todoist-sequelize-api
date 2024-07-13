@@ -2,29 +2,21 @@ const Comment = require("../models/comment.model");
 
 const { v4: uuidv4 } = require("uuid");
 
+const sendResponse = require("../utils/response");
+
 const create = async (request, response) => {
   try {
     request.body.id = uuidv4();
     const comment = await Comment.create(request.body);
-    response.status(201).json({
-      status_code: 201,
-      status: "success",
-      data: {
-        comment: comment,
-      },
-      error: null,
-      message: "Comment created successfully!",
-    });
+
+    sendResponse(response, 201, "Comment created successfully!", comment);
   } catch (error) {
-    response.status(400).json({
-      status: "failed",
-      status_code: 400,
-      error: {
-        error_message: error.message,
-      },
-      message: "Error occured while creating comment",
-      data: null,
-    });
+    sendResponse(
+      response,
+      400,
+      "Error occured while creating comment",
+      error.message
+    );
   }
 };
 
@@ -35,26 +27,15 @@ const getOne = async (request, response) => {
       const comment = await Comment.findOne({
         where: { id: id },
       });
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        data: {
-          comment: comment,
-        },
-        error: null,
-        message: "Comment retrived successfully!",
-      });
+      sendResponse(response, 200, "Comments retrived successfully!", comment);
     }
   } catch (error) {
-    response.status(500).json({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      message: `Error occured while fetching comment`,
-      data: null,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while fetching comment",
+      error.message
+    );
   }
 };
 
@@ -66,27 +47,20 @@ const update = async (request, response) => {
         where: { id: id },
       });
       const comment = Comment.findOne({ where: { id: id } });
-
-      response.status(200).json({
-        status: "success",
-        status_code: 200,
-        data: {
-          comment: comment,
-        },
-        error: null,
-        message: `Comment details are updated successfully!`,
-      });
+      sendResponse(
+        response,
+        200,
+        "Comment details updated successfully!",
+        comment
+      );
     }
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      status_code: 500,
-      error: {
-        error_message: error.message,
-      },
-      data: null,
-      message: "Error occured while updating project details!",
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while updating project details!",
+      error.message
+    );
   }
 };
 
@@ -94,25 +68,14 @@ const remove = async (request, response) => {
   const id = request.params.id;
   try {
     await Comment.destroy({ where: { id: id } });
-    response.status(204).json({
-      status: "success",
-      status_code: 204,
-      data: {
-        comment_id: id,
-      },
-      error: null,
-      message: "Comment removed successfully!",
-    });
+    sendResponse(response, 204, "Comment removed successfully!", null);
   } catch (error) {
-    response.status(500).send({
-      status: "failed",
-      status_code: 500,
-      data: null,
-      error: {
-        error_message: error.message,
-      },
-      message: `Error occured while removeing project`,
-    });
+    sendResponse(
+      response,
+      500,
+      "Error occured while removing project",
+      error.message
+    );
   }
 };
 
