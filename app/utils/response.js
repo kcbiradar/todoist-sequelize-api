@@ -7,7 +7,7 @@ const sendResponse = (response, status_code, message, data = null) => {
   if (status_code < 400) {
     resObject.data = data;
   } else {
-    resObject.error = error;
+    resObject.error = data;
   }
   return response.status(status_code).json(resObject);
 };
