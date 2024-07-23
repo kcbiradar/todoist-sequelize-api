@@ -1,8 +1,9 @@
-import React from "react";
-import { Form, Input, Button, Typography } from "antd";
+import React, { useState } from "react";
+import { Form, Input, Button, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-// import axios from "axios";
-
+import { USER_URL } from "../utils/urls";
+import axios from "axios";
+import { useNavigate } from "react-router";
 
 const { Title } = Typography;
 
@@ -12,10 +13,23 @@ interface formType {
 }
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
-  const onFinish = (values: formType) => {
-    console.log("Success:", values);
-    
+  const onFinish = async (values: formType) => {
+    try {
+      setError("");
+      const response = await axios.post(USER_URL + `login`, values);
+      const { token, user_id, name } = response.data;
+      localStorage.setItem("user_id", user_id);
+      localStorage.setItem("token", token);
+      localStorage.setItem("name", name);
+      message.success("Logged in successfully!");
+      navigate("/app/");
+    } catch (error) {
+      message.error("Auth failed!");
+      setError("Incorrect details!");
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -47,7 +61,6 @@ const Login: React.FC = () => {
           name="basic"
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          // onSubmit={handleSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
@@ -71,6 +84,9 @@ const Login: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
+        <div>
+          {error && <p style={{ marginTop: "15px", color: "red" }}>{error}</p>}
+        </div>
       </div>
     </div>
   );

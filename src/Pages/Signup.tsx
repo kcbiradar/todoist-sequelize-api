@@ -1,6 +1,10 @@
 import React from "react";
-import { Form, Input, Button, Typography } from "antd";
+import { Form, Input, Button, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { USER_URL } from "../utils/urls";
+import axios from "axios";
+import { useNavigate } from "react-router";
+// import { setError } from "../Redux/features/errorAndLoaderSlice";
 
 const { Title } = Typography;
 
@@ -12,8 +16,19 @@ interface formType {
 }
 
 const Signup: React.FC = () => {
-  const onFinish = (values: formType) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
+  const onFinish = async (values: formType) => {
+    try {
+      if (values.confirm_password === values.password) {
+        await axios.post(USER_URL + "signup", values);
+        message.success("Registered successfully & login now!");
+        navigate("/");
+      } else {
+        message.error("Password not matching");
+      }
+    } catch (error) {
+      message.error("Unable to create account now!");
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {

@@ -1,24 +1,24 @@
 import React, { useState } from "react";
-import { Button, Modal, Form, Input, Select, Switch } from "antd";
+import { Button, Modal, Form, Input, Select, Switch, message } from "antd";
 import colors from "../../utils/colors";
+import axios from "axios";
+import { PROJECT_URL } from "../../utils/urls";
+import { setLoader } from "../../Redux/features/errorAndLoaderSlice";
+import { addProject } from "../../Redux/features/projectSlice";
+import { useSelector, useDispatch } from "react-redux";
+import ModalButton from "../Presention/ModalButton";
 const { Option } = Select;
 
 const CreateProject: React.FC = () => {
-  const [loading, setLoading] = useState(false); // iam doing this one global loading...
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
+
+  const loading = useSelector((state: any) => state.errorAndLoader.loading);
+  const user_id: string | null = localStorage.getItem("user_id");
 
   const showModal = () => {
     setOpen(true);
-  };
-
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setOpen(false);
-      form.resetFields();
-    }, 3000);
   };
 
   const handleCancel = () => {
@@ -26,23 +26,30 @@ const CreateProject: React.FC = () => {
     form.resetFields();
   };
 
-  const onFinish = (values: any) => {
-    console.log("Received values:", values);
-    handleOk();
+  const handleCreateProject = async (values: any) => {
+    try {
+      dispatch(setLoader(true));
+      const response = await axios.post(PROJECT_URL + user_id, values);
+      message.success("Project created successfully");
+      dispatch(addProject(response.data.data));
+      form.resetFields();
+      setOpen(false);
+    } catch (error) {
+      message.error("Failed to create project");
+    } finally {
+      dispatch(setLoader(false));
+    }
   };
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        + Add project
-      </Button>
+      <ModalButton showModal={showModal} text={"project"} />
       <Modal
         open={open}
         title="Add project"
-        onOk={handleOk}
         onCancel={handleCancel}
-        confirmLoading={loading}
         footer={null}
+        destroyOnClose={true}
       >
         <Form
           form={form}
@@ -50,7 +57,7 @@ const CreateProject: React.FC = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleCreateProject}
         >
           <Form.Item
             label="Name"
@@ -78,22 +85,22 @@ const CreateProject: React.FC = () => {
           </Form.Item>
           <Form.Item
             label="Add to favorites"
-            name="favorite"
+            name="is_favorite"
             valuePropName="checked"
             initialValue={false}
           >
             <Switch />
           </Form.Item>
-          <Form.Item
-            wrapperCol={{ offset: 6, span: 16 }}
-            style={{ marginBottom: 0 }}
-          >
-            <Button onClick={handleCancel} style={{ marginRight: 8 }}>
-              Cancel
-            </Button>
-            <Button type="primary" htmlType="submit" loading={loading}>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              style={{ marginRight: 8 }}
+            >
               Add
             </Button>
+            <Button onClick={handleCancel}>Cancel</Button>
           </Form.Item>
         </Form>
       </Modal>

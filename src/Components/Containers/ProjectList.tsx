@@ -1,68 +1,67 @@
-import React, { useState } from 'react';
-import type { MenuProps } from 'antd';
-import { Menu} from 'antd';
+import React, { useEffect } from "react";
+import { Menu } from "antd";
+import axios from "axios";
+import { PROJECT_URL } from "../../utils/urls";
+import { setProjects } from "../../Redux/features/projectSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { NavLink } from "react-router-dom";
+import BorderlessTableOutlined from "@ant-design/icons/lib/icons/BorderlessTableOutlined";
 
-type MenuItem = Required<MenuProps>['items'][number];
-
-const items: MenuItem[] = [
-  {
-    key: 'sub1',
-    label: 'Project-1',
-    children: [
-      { key: '1', label: 'Option 1' },
-      { key: '2', label: 'Option 2' },
-      { key: '3', label: 'Option 3' },
-      { key: '4', label: 'Option 4' },
-    ],
-  },
-  {
-    key: 'sub2',
-    label: 'Project-2',
-    children: [
-      { key: '5', label: 'Option 5' },
-      { key: '6', label: 'Option 6' },
-      {
-        key: 'sub3',
-        label: 'sub-project',
-        children: [
-          { key: '7', label: 'Option 7' },
-          { key: '8', label: 'Option 8' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'sub4',
-    label: 'Project-3',
-    
-    children: [
-      { key: '9', label: 'Option 9' },
-      { key: '10', label: 'Option 10' },
-      { key: '11', label: 'Option 11' },
-      { key: '12', label: 'Option 12' },
-    ],
-  },
-];
+const { SubMenu } = Menu;
 
 const ProjectList: React.FC = () => {
-  const [current, setCurrent] = useState('1');
+  const user_id = localStorage.getItem("user_id");
+  const dispatch = useDispatch();
+  const data = useSelector((state: any) => state.project.project);
 
-  const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
-    setCurrent(e.key);
-  };
+  useEffect(() => {
+    async function getAllProject() {
+      try {
+        const response = await axios.get(PROJECT_URL + user_id);
+        dispatch(setProjects(response.data.data));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (user_id) {
+      getAllProject();
+    }
+  }, [dispatch]);
 
   return (
-    <>
-      <Menu
-        onClick={onClick}
-        style={{ width: 256 }}
-        defaultOpenKeys={['sub1']}
-        selectedKeys={[current]}
-        mode="inline"
-        items={items}
-      />
-    </>
+    <Menu
+      style={{
+        width: 280,
+        border: "1px solid #d3d3d3",
+        borderRadius: 5,
+        marginTop: "20px",
+      }}
+      defaultOpenKeys={[]}
+      mode="inline"
+    >
+      <SubMenu
+        key="sub1"
+        title={
+          <span style={{ fontWeight: "bold", color: "grey" }}>My Projects</span>
+        }
+      >
+        {data.map((project: any) => (
+          <Menu.Item key={project.id} style={{ padding: "8px 16px" }}>
+            <NavLink
+              to={`/app/project/${project.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span style={{ marginRight: 15 }}>
+                  <BorderlessTableOutlined style={{ fontSize: "14px" }} />
+                </span>
+                <span style={{ fontSize: "16px" }}>{project.name}</span>
+              </div>
+            </NavLink>
+          </Menu.Item>
+        ))}
+      </SubMenu>
+    </Menu>
   );
 };
 
